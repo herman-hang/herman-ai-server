@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=herman
+      - MYSQL_USER=herman
+      - MYSQL_PASSWORD=herman@2023
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  kafka:
+    image: wurstmeister/kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_CREATE_TOPICS=test:1:1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+      - kafka
