@@ -63,7 +63,6 @@ func bodyParam(data []byte, ctx *gin.Context) (params map[string]interface{}) {
 		ctx.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		_ = ctx.ShouldBindJSON(&params)
 	}
-
 	if len(params) == constants.LengthByZero {
 		for k, v := range ctx.Request.Form {
 			params[k] = v[0]

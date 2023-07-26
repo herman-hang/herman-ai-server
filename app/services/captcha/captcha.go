@@ -22,8 +22,8 @@ func GetCaptcha(data map[string]interface{}) (captchaData map[string]interface{}
 // @return captchaData 返回验证码相关信息
 func CheckCaptcha(data map[string]interface{}) (err error) {
 	err = utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).
-		Check(fmt.Sprintf("%s", data["Token"]),
-			fmt.Sprintf("%s", data["PointJson"]))
+		Check(fmt.Sprintf("%s", data["token"]),
+			fmt.Sprintf("%s", data["pointJson"]))
 	if err != nil {
 		panic(CaptchaConstant.CheckCaptchaError)
 	}

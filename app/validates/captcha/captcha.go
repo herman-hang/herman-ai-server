@@ -14,7 +14,7 @@ type GetCaptchaValidate struct {
 
 // CheckCaptchaValidate 检查验证码正确性结构体
 type CheckCaptchaValidate struct {
-	CaptchaType int    `json:"captchaType" validate:"required,numeric,oneof=1 2" label:"验证码类型"`
+	CaptchaType string `json:"captchaType" validate:"required" label:"验证码类型"`
 	Token       string `json:"token" validate:"required" label:"验证码Token"`
 	PointJson   string `json:"pointJson" validate:"required" label:"验证码PointJson"`
 }
