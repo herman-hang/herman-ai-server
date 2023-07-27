@@ -22,12 +22,10 @@ func ExecConsumer(topic string) (kafkaConsumer kafka.Consumer) {
 // @param data 待消费数据
 // @param jobFunc 消费者函数
 // @return 返回一个闭包
-func Dispatch(data map[string]interface{}, jobFunc func(topic string)) func() {
-	return func() {
-		topic := fmt.Sprintf("%s", data["topic"])
-		// 调用生产者
-		go kafka.Send(topic, data)
-		// 调用消费者
-		go jobFunc(topic)
-	}
+func Dispatch(data map[string]interface{}, jobFunc func(topic string)) {
+	topic := fmt.Sprintf("%s", data["topic"])
+	// 调用生产者
+	go kafka.Send(topic, data["data"].(map[string]interface{}))
+	// 调用消费者
+	go jobFunc(topic)
 }

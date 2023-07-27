@@ -7,6 +7,9 @@ import (
 	CaptchaService "github.com/TestsLing/aj-captcha-go/service"
 	CaptchaConstant "github.com/herman-hang/herman/app/constants/captcha"
 	"github.com/herman-hang/herman/servers/settings"
+	"math/rand"
+	"strconv"
+	"time"
 )
 
 // Factory 初始化滑块验证码
@@ -38,4 +41,17 @@ func Factory() (factory *CaptchaService.CaptchaServiceFactory) { // 行为校验
 	factory.RegisterService(Constant.BlockPuzzleCaptcha, CaptchaService.NewBlockPuzzleCaptchaService(factory))
 
 	return factory
+}
+
+// GenerateVerificationCode 生成6位随机数字验证码
+// @return code 返回6位随机数字验证码
+func GenerateVerificationCode() string {
+	rand.Seed(time.Now().UnixNano())
+
+	code := ""
+	for i := 0; i < 6; i++ {
+		code += strconv.Itoa(rand.Intn(10) + 48) // 生成随机数字字符
+	}
+
+	return code
 }

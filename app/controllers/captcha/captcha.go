@@ -22,5 +22,6 @@ func GetCaptcha(ctx *gin.Context) {
 func CheckCaptcha(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-	context.Json(CaptchaService.CheckCaptcha(CaptchaValidate.CheckCaptcha(data)))
+	CaptchaService.CheckCaptcha(CaptchaValidate.CheckCaptcha(data))
+	context.Json(nil)
 }

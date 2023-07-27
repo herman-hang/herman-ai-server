@@ -14,3 +14,12 @@ func Login(ctx *gin.Context) {
 	data := context.Params()
 	context.Json(UserService.Login(UserValidate.Login(data), ctx))
 }
+
+// SendCode 发送验证码
+// @param *gin.Context ctx 上下文
+func SendCode(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	UserService.SendCode(UserValidate.SendCode(data), ctx)
+	context.Json(nil)
+}

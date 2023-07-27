@@ -20,13 +20,12 @@ func GetCaptcha(data map[string]interface{}) (captchaData map[string]interface{}
 // CheckCaptcha 检查验证码
 // @param map data 前端请求数据
 // @return captchaData 返回验证码相关信息
-func CheckCaptcha(data map[string]interface{}) (err error) {
-	err = utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).
+func CheckCaptcha(data map[string]interface{}) {
+	err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).
 		Check(fmt.Sprintf("%s", data["token"]),
 			fmt.Sprintf("%s", data["pointJson"]))
+
 	if err != nil {
 		panic(CaptchaConstant.CheckCaptchaError)
 	}
-
-	return nil
 }

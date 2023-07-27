@@ -1,12 +1,15 @@
 package pc
 
 import (
+	"context"
 	"crypto/rand"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	PcConstant "github.com/herman-hang/herman/app/constants/pc"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/utils"
+	"github.com/herman-hang/herman/jobs"
+	"github.com/herman-hang/herman/kernel/core"
 	"math/big"
 	"time"
 )
@@ -15,6 +18,18 @@ import (
 // @param map data 前端请求数据
 // @return interface{} 返回一个token值
 func Login(data map[string]interface{}, c *gin.Context) interface{} {
+	// 设置上下文
+	ctx := context.Background()
+	// 取出手机验证码
+	result, err := core.Redis.Get(ctx, fmt.Sprintf("send_code:%s", c.ClientIP())).Result()
+	if err != nil {
+		panic(PcConstant.LoginCodeExpire)
+	}
+	// 判断验证码是否正确
+	if result != data["code"] {
+		panic(PcConstant.LoginCodeError)
+	}
+
 	user, isExist := repositories.User().UserInfoByPhone(fmt.Sprintf("%s", data["phone"]))
 
 	// 判断用户是否存在
@@ -64,4 +79,25 @@ func generateRandomPassword(length int) string {
 	}
 
 	return string(password)
+}
+
+// SendCode 发送验证码
+// @param map data 前端请求数据
+// @return void
+func SendCode(data map[string]interface{}, ctx *gin.Context) {
+	// 生成验证码
+	code := utils.GenerateVerificationCode()
+	// 发送短信
+	jobs.Dispatch(map[string]interface{}{
+		"topic": "sendSms",
+		"data": map[string]interface{}{
+			"mobile":  data["phone"],
+			"content": fmt.Sprintf("【Herman AI】您的验证码是：%s。请不要把验证码泄露给其他人。", code),
+		},
+	}, jobs.SendSms)
+	// 根据IP地址缓存验证码
+	// 设置上下文
+	c := context.Background()
+
+	core.Redis.Set(c, fmt.Sprintf("send_code:%s", ctx.ClientIP()), code, time.Minute)
 }
