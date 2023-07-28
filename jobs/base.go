@@ -5,15 +5,16 @@ import (
 	"github.com/herman-hang/herman/kernel/kafka"
 )
 
-// ExecConsumer 调用消费者执行消费
+// Consumer 调用消费者执行消费
 // @param topic string 消费主题
 // @return kafkaConsumer 返回kafka消费者结构体
-func ExecConsumer(topic string) (kafkaConsumer kafka.Consumer) {
+func Consumer(topic string) (kafkaConsumer kafka.Consumer) {
 	kafkaConsumer = kafka.Consumer{
 		Topic:        topic,
 		MessageQueue: make(chan []byte, 1000),
 	}
-	kafkaConsumer.Consume()
+
+	kafkaConsumer.Exec()
 
 	return kafkaConsumer
 }

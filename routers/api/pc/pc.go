@@ -11,4 +11,8 @@ import (
 func Router(router *gin.RouterGroup) {
 	// 用户登录
 	router.POST("/login", UserController.Login)
+	// 发送手机验证码
+	router.POST("/send/code", UserController.SendCode)
+	// 获取用户信息
+	router.GET("/users", UserController.UserInfo)
 }

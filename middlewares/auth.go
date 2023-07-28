@@ -23,8 +23,8 @@ func Jwt(guard string) gin.HandlerFunc {
 			ctx.Set("user", repositories.User().GetUserInfo(claims.Uid))
 		case "admin": // 管理员后台
 			ctx.Set("admin", repositories.Admin().GetAdminInfo(claims.Uid))
-		case "merchant": // 商家后台
-
+		case "pc": // pc端
+			ctx.Set("pc", repositories.User().GetUserInfo(claims.Uid))
 		default:
 			panic(MiddlewareConstant.GuardError)
 		}

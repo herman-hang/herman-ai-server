@@ -21,7 +21,6 @@ type Users struct {
 	Email        string         `json:"email" gorm:"column:email;comment:邮箱"`
 	Introduction string         `json:"introduction" gorm:"column:introduction;comment:简介"`
 	State        uint8          `json:"state" gorm:"column:state;default:2;comment:状态(1已停用,2已启用)"`
-	Sort         uint           `json:"sort" gorm:"column:sort;default:0;comment:排序"`
 	LoginOutIp   string         `json:"loginOutIp" gorm:"column:login_out_ip;comment:上一次登录IP地址"`
 	LoginTotal   string         `json:"loginTotal" gorm:"column:login_total;default:0;comment:登录总数"`
 	LoginOutAt   string         `json:"loginOutAt" gorm:"column:login_out_at;comment:上一次登录时间"`

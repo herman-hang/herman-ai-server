@@ -50,7 +50,7 @@ func GenerateVerificationCode() string {
 
 	code := ""
 	for i := 0; i < 6; i++ {
-		code += strconv.Itoa(rand.Intn(10) + 48) // 生成随机数字字符
+		code += strconv.Itoa(rand.Intn(10)) // 生成随机数字字符
 	}
 
 	return code

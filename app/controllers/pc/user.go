@@ -23,3 +23,11 @@ func SendCode(ctx *gin.Context) {
 	UserService.SendCode(UserValidate.SendCode(data), ctx)
 	context.Json(nil)
 }
+
+// UserInfo 获取用户信息
+// @param *gin.Context ctx 上下文
+func UserInfo(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := UserService.UserInfo(ctx)
+	context.Json(data)
+}

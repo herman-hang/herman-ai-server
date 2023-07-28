@@ -11,7 +11,7 @@ import (
 
 // CaptchaLoginValidate 用户登录验证结构体
 type CaptchaLoginValidate struct {
-	Phone               string `json:"phone" validate:"required,phone" label:"手机号码"`
+	Phone               string `json:"phone" validate:"required,len=11" label:"手机号码"`
 	Code                string `json:"code" validate:"required,len=6" label:"验证码"`
 	CaptchaType         string `json:"captchaType" validate:"required" label:"验证码类型"`
 	CaptchaVerification string `json:"captchaVerification" validate:"required" label:"验证码最终校验Token"`

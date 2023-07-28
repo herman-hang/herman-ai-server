@@ -10,6 +10,7 @@ var Status = map[string]interface{}{
 	"42": "帐户已过期",
 	"43": "IP地址限制",
 	"50": "内容含有敏感词",
+	"51": "手机号码不正确",
 }
 
 const (

@@ -18,22 +18,23 @@ import (
 func SendSms(topic string) {
 	var data map[string]interface{}
 	// 调用消费者对数据进行消费，并返回结构体
-	kafkaConsumer := ExecConsumer(topic)
-	for {
-		// 从通道取出消费的数据
-		message := <-kafkaConsumer.MessageQueue
+	kafkaConsumer := Consumer(topic)
+
+	// 从通道取出消费的数据
+	for message := range kafkaConsumer.MessageQueue {
 		// 将取出的JSON数据转为map
 		if err := json.Unmarshal(message, &data); err != nil {
-			core.Log.Errorf("Consumer sms json data failed, err:%v", err)
+			core.Log.Errorf(err.Error())
 		}
-		execSend(data)
+		exec(data)
 	}
+
 }
 
 // execSend 执行发送
 // @param map[string]interface{} data 带发送数据
 // @return void
-func execSend(data map[string]interface{}) {
+func exec(data map[string]interface{}) {
 	// 发起http请求
 	response, err := http.Get(fmt.Sprintf("%ssms?u=%s&p=%s&m=%s&c=%s",
 		settings.Config.Sms.Api,
@@ -49,7 +50,7 @@ func execSend(data map[string]interface{}) {
 
 	defer func(body io.ReadCloser) {
 		if err := body.Close(); err != nil {
-			core.Log.Errorf("Sms send close failed, err:%v", err)
+			core.Log.Errorf(err.Error())
 		}
 	}(response.Body)
 

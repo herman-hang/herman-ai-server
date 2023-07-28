@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
 	CaptchaController "github.com/herman-hang/herman/app/controllers/captcha"
-	UserController "github.com/herman-hang/herman/app/controllers/pc"
 	middleware "github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers/api/admin"
 	"github.com/herman-hang/herman/routers/api/mobile"
+	"github.com/herman-hang/herman/routers/api/pc"
 	"github.com/herman-hang/herman/servers/settings"
 )
 
@@ -28,8 +28,6 @@ func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 	api.GET("/captcha", CaptchaController.GetCaptcha)
 	// 检查验证码正确性
 	api.POST("/captcha/check", CaptchaController.CheckCaptcha)
-	// 发送手机验证码
-	api.POST("/send/code", UserController.SendCode)
 
 	// 移动端模块
 	userRouter := api.Group("/user", middleware.Jwt("user"))
@@ -44,9 +42,9 @@ func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 	}
 
 	// PC端模块
-	pcRouter := api.Group("/pc", middleware.Cors())
+	pcRouter := api.Group("/pc", middleware.Jwt("pc"))
 	{
-		admin.Router(pcRouter)
+		pc.Router(pcRouter)
 	}
 
 	return rootEngine
