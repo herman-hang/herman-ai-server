@@ -69,7 +69,7 @@ func adaptiveDownload(info map[string]interface{}) (data []byte) {
 // @param []byte data 文件流
 // @param string fileName 文件名称
 // @return void
-func response(ctx *gin.Context, data []byte, fileName string) {
-	ctx.Writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
+func response(ctx *gin.Context, data []byte, fileData map[string]interface{}) {
+	ctx.Writer.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileData["fileName"]))
 	ctx.Data(http.StatusOK, "application/octet-stream", data)
 }

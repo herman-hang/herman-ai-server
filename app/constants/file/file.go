@@ -35,4 +35,6 @@ const (
 	MergeFail            = "合并文件失败"
 	RemoveFileFail       = "删除文件失败"
 	NotSupport           = "当前设置不支持分片上传"
+	WriterFail           = "文件写入失败"
+	EncodeJsonFail       = "JSON编码失败"
 )

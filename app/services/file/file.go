@@ -58,7 +58,7 @@ func Download(ctx *gin.Context, data map[string]interface{}) {
 	// 返回文件流
 	stream := adaptiveDownload(info)
 	// 响应文件流
-	response(ctx, stream, info["fileName"].(string))
+	response(ctx, stream, info)
 }
 
 // Preview 图片预览
@@ -86,7 +86,7 @@ func Preview(ctx *gin.Context, data map[string]interface{}) {
 	// 响应文件流
 	ctx.Header("Content-Type", info["fileType"].(string))
 	ctx.Header("Connection", "keep-alive")
-	response(ctx, stream, info["fileName"].(string))
+	response(ctx, stream, info)
 }
 
 // Prepare 生成分片上传方案

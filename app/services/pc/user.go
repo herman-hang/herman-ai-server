@@ -28,10 +28,14 @@ func Login(data map[string]interface{}, c *gin.Context) interface{} {
 	if result != data["code"] {
 		panic(PcConstant.LoginCodeError)
 	}
-
-	user, isExist := repositories.User().UserInfoByPhone(fmt.Sprintf("%s", data["phone"]))
+	user, err := repositories.User().Find(map[string]interface{}{
+		"phone": data["phone"],
+	})
+	if err != nil {
+		panic(PcConstant.LoginFail)
+	}
 	// 判断用户是否存在
-	if !isExist {
+	if len(user) == 0 {
 		user, err := repositories.User().Insert(map[string]interface{}{
 			"user":       data["phone"],
 			"password":   utils.HashEncode(generateRandomPassword(10)),
@@ -46,18 +50,18 @@ func Login(data map[string]interface{}, c *gin.Context) interface{} {
 		}
 		return utils.GenerateToken(&utils.Claims{Uid: user["id"].(uint), Guard: "pc"})
 	} else {
-		err := repositories.User().Update([]uint{data["id"].(uint)}, map[string]interface{}{
+		// 更新用户登录信息
+		err := repositories.User().Update([]uint{user["id"].(uint)}, map[string]interface{}{
 			"loginOutIp": c.ClientIP(),
 			"loginOutAt": time.Now().Format("2006-01-02 15:04:05"),
-			"loginTotal": user["loginTotal"].(int) + 1,
+			"loginTotal": user["loginTotal"].(uint) + 1,
 		})
 		if err != nil {
 			panic(PcConstant.LoginFail)
 		}
+		// 返回token
+		return utils.GenerateToken(&utils.Claims{Uid: user["id"].(uint), Guard: "pc"})
 	}
-
-	// 返回token
-	return utils.GenerateToken(&utils.Claims{Uid: user["id"].(uint), Guard: "pc"})
 }
 
 // SendCode 发送验证码
@@ -81,15 +85,33 @@ func SendCode(data map[string]interface{}, ctx *gin.Context) {
 // @param *gin.Context c 上下文
 // @param map[string]interface{} 返回用户信息
 func UserInfo(ctx *gin.Context) map[string]interface{} {
-	admin, _ := ctx.Get("pc")
-	info := admin.(*models.Users)
+	users, _ := ctx.Get("pc")
+
+	info := users.(models.Users)
 	user, err := repositories.User().Find(map[string]interface{}{
 		"id": info.Id,
-	}, []string{"id", "phone", "nickname", "photo"})
+	}, []string{"id", "phone", "nickname", "photo_id"})
 	if err != nil {
 		panic(PcConstant.GetUserInfoFail)
 	}
 	user["phone"] = hidePhoneNumberMiddle(user["phone"].(string))
 
 	return user
+}
+
+// UserModify 用户信息修改
+// @param map[string]interface{} data 前端请求数据
+// @param *gin.Context ctx 上下文
+// @return map[string]interface{} 返回用户信息
+func UserModify(data map[string]interface{}, ctx *gin.Context) map[string]interface{} {
+	users, _ := ctx.Get("pc")
+	info := users.(models.Users)
+	err := repositories.User().Update([]uint{info.Id}, map[string]interface{}{
+		"nickname": data["nickname"],
+		"photoId":  data["photoId"],
+	})
+	if err != nil {
+		panic(PcConstant.ModifyInfoFail)
+	}
+	return data
 }

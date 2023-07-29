@@ -31,3 +31,12 @@ func UserInfo(ctx *gin.Context) {
 	data := UserService.UserInfo(ctx)
 	context.Json(data)
 }
+
+// UserModify 用户信息修改
+// @param *gin.Context ctx 上下文
+func UserModify(ctx *gin.Context) {
+	context := app.Request{Context: ctx}
+	data := context.Params()
+	UserService.UserModify(UserValidate.ModifyInfo.Check(data), ctx)
+	context.Json(nil)
+}

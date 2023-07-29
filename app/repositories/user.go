@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/herman-hang/herman/app/constants"
 	UserConstant "github.com/herman-hang/herman/app/constants/user"
 	"github.com/herman-hang/herman/app/models"
 	"github.com/herman-hang/herman/kernel/core"
@@ -33,16 +32,4 @@ func (base UserRepository) GetUserInfo(attributes interface{}) (user models.User
 	}
 
 	return user
-}
-
-// UserInfoByPhone 根据手机号获取用户信息
-// @param interface{} attributes 用户手机号
-// @return user 返回当前user用户的信息
-func (base UserRepository) UserInfoByPhone(attributes interface{}) (map[string]interface{}, bool) {
-	data := make(map[string]interface{})
-	err := base.Db.Model(&base.Model).Where("phone = ?", attributes).Find(&data).Error
-	if err != nil && len(data) > constants.LengthByZero {
-		return data, true
-	}
-	return nil, false
 }

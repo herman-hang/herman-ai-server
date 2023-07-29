@@ -6,6 +6,7 @@ import (
 	FileConstant "github.com/herman-hang/herman/app/constants/file"
 	"github.com/herman-hang/herman/app/utils"
 	"github.com/herman-hang/herman/app/validates"
+	"github.com/herman-hang/herman/kernel/core"
 	"github.com/mitchellh/mapstructure"
 	"mime/multipart"
 	"net/http"
@@ -32,8 +33,9 @@ type ChunkMergeValidate struct {
 // @param *gin.Context ctx 上下文对象
 // @return void
 func Check(ctx *gin.Context) (files []*multipart.FileHeader) {
-	// 请求体最大允许的大小不能超过 100MB
-	if err := ctx.Request.ParseMultipartForm(100 << 20); err != nil {
+	// 请求体最大允许的大小不能超过 10MB
+	if err := ctx.Request.ParseMultipartForm(10 << 20); err != nil {
+		core.Log.Debug(err.Error())
 		panic(FileConstant.MaxMemory)
 	}
 
