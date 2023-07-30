@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app/constants/middleware"
+	"github.com/herman-hang/herman/app/constants/admin/middleware"
 	"github.com/herman-hang/herman/app/models"
 	"github.com/herman-hang/herman/app/repositories"
 	"net/http"

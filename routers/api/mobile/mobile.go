@@ -2,7 +2,7 @@ package mobile
 
 import (
 	"github.com/gin-gonic/gin"
-	UserController "github.com/herman-hang/herman/app/controllers/user"
+	UserController "github.com/herman-hang/herman/app/controllers/admin/user"
 )
 
 // Router 移动端相关路由

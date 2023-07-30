@@ -6,7 +6,7 @@ import (
 	"github.com/bmizerany/assert"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
-	MiddlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
+	MiddlewareConstant "github.com/herman-hang/herman/app/constants/admin/middleware"
 	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers"

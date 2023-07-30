@@ -5,7 +5,7 @@ import (
 	CaptchaConfig "github.com/TestsLing/aj-captcha-go/config"
 	Constant "github.com/TestsLing/aj-captcha-go/const"
 	CaptchaService "github.com/TestsLing/aj-captcha-go/service"
-	CaptchaConstant "github.com/herman-hang/herman/app/constants/captcha"
+	CaptchaConstant "github.com/herman-hang/herman/app/constants/common/captcha"
 	"github.com/herman-hang/herman/servers/settings"
 	"math/rand"
 	"strconv"

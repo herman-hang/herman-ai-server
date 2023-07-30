@@ -10,7 +10,7 @@ type Admin struct {
 	Id           uint           `json:"id" gorm:"column:id;primary_key;comment:管理员ID"`
 	User         string         `json:"user" gorm:"column:user;comment:管理员用户名"`
 	Password     string         `json:"password" gorm:"column:password;comment:管理员密码"`
-	Photo        string         `json:"photo" gorm:"column:photo;comment:管理员头像"`
+	PhotoId      uint           `json:"photoId" gorm:"column:photo_id;comment:头像ID"`
 	Name         string         `json:"name" gorm:"column:name;comment:真实姓名"`
 	Card         string         `json:"card" gorm:"column:card;comment:身份证号码"`
 	Sex          uint8          `json:"sex" gorm:"column:sex;default:3;comment:性别(1为女,2为男，3为保密)"`

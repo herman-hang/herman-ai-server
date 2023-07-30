@@ -3,11 +3,12 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
-	CaptchaController "github.com/herman-hang/herman/app/controllers/captcha"
+	CaptchaController "github.com/herman-hang/herman/app/controllers/common/captcha"
 	middleware "github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers/api/admin"
 	"github.com/herman-hang/herman/routers/api/mobile"
 	"github.com/herman-hang/herman/routers/api/pc"
+	"github.com/herman-hang/herman/routers/api/user"
 	"github.com/herman-hang/herman/servers/settings"
 )
 
@@ -29,10 +30,16 @@ func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 	// 检查验证码正确性
 	api.POST("/captcha/check", CaptchaController.CheckCaptcha)
 
-	// 移动端模块
+	// 前台模块
 	userRouter := api.Group("/user", middleware.Jwt("user"))
 	{
-		mobile.Router(userRouter)
+		user.Router(userRouter)
+	}
+
+	// 移动端模块
+	mobileRouter := api.Group("/mobile", middleware.Jwt("mobile"))
+	{
+		mobile.Router(mobileRouter)
 	}
 
 	// 后台模块

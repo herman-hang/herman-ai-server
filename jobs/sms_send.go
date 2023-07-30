@@ -3,7 +3,7 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
-	SmsConstant "github.com/herman-hang/herman/app/constants/sms"
+	SmsConstant "github.com/herman-hang/herman/app/constants/common/sms"
 	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"io"

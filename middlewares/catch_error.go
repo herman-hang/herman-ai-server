@@ -2,10 +2,12 @@ package middlewares
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/app"
-	"github.com/herman-hang/herman/kernel/core"
 	"net/http"
+	"runtime"
+	"strings"
 )
 
 // CatchError 异常捕捉
@@ -18,16 +20,30 @@ func CatchError() gin.HandlerFunc {
 				switch data.(type) {
 				case string:
 					data := fmt.Sprintf("%s", data)
-					core.Log.Errorln(data)
 					context.Json(nil, data, http.StatusInternalServerError)
 				case map[string]interface{}:
 					data := data.(map[string]interface{})
-					core.Log.Errorln(data)
 					context.Json(nil, data["message"], data["code"])
+				default:
+					printStack()
 				}
 				ctx.Abort()
 			}
 		}()
 		ctx.Next()
+	}
+}
+
+// printStack 获取当前的错误堆栈信息
+// @return void
+func printStack() {
+	stack := make([]byte, 4096)
+	length := runtime.Stack(stack, false)
+	stackStr := string(stack[:length])
+	stackLines := strings.Split(stackStr, "\n")
+	for _, line := range stackLines {
+		if !strings.Contains(line, "runtime/panic.go") {
+			fmt.Println(color.RedString(line))
+		}
 	}
 }

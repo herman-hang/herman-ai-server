@@ -8,7 +8,7 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	commandConstant "github.com/herman-hang/herman/app/constants/command"
+	commandConstant "github.com/herman-hang/herman/app/constants/common/command"
 	"github.com/herman-hang/herman/servers/settings"
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"

@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	MiddlewareConstant "github.com/herman-hang/herman/app/constants/middleware"
+	MiddlewareConstant "github.com/herman-hang/herman/app/constants/admin/middleware"
 	"github.com/herman-hang/herman/app/repositories"
 	"github.com/herman-hang/herman/app/utils"
 	"github.com/herman-hang/herman/servers/settings"
@@ -18,9 +18,11 @@ func Jwt(guard string) gin.HandlerFunc {
 		}
 		claims := utils.JwtVerify(ctx, guard)
 		switch guard {
-		case "user", "mobile": // 前台和移动端（用户）
+		case "user": // 前台
 			// 用户信息存储在请求中
 			ctx.Set("user", repositories.User().GetUserInfo(claims.Uid))
+		case "mobile": // 移动端
+			ctx.Set("mobile", repositories.User().GetUserInfo(claims.Uid))
 		case "admin": // 管理员后台
 			ctx.Set("admin", repositories.Admin().GetAdminInfo(claims.Uid))
 		case "pc": // pc端

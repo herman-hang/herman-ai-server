@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	UserConstant "github.com/herman-hang/herman/app/constants/user"
+	UserConstant "github.com/herman-hang/herman/app/constants/admin/user"
 	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/servers/settings"
 	"net/http"

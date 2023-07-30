@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	FileConstant "github.com/herman-hang/herman/app/constants/file"
+	FileConstant "github.com/herman-hang/herman/app/constants/admin/file"
 	"github.com/herman-hang/herman/app/models"
 	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"

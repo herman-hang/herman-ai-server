@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	UserConstant "github.com/herman-hang/herman/app/constants/user"
+	UserConstant "github.com/herman-hang/herman/app/constants/admin/user"
 	"github.com/herman-hang/herman/app/models"
 	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
