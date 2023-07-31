@@ -1,9 +1,11 @@
 package repositories
 
 import (
+	"fmt"
+	"github.com/herman-hang/herman/app/constants"
 	"github.com/herman-hang/herman/app/models"
-	"github.com/herman-hang/herman/app/utils"
 	"github.com/herman-hang/herman/kernel/core"
+	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
 )
 
@@ -23,47 +25,46 @@ func Chatroom(tx ...*gorm.DB) *ChatroomRepository {
 	return &ChatroomRepository{BaseRepository{Model: new(models.Chatroom), Db: core.Db}}
 }
 
-// GetChatroomWithMessagesByUserId 根据用户ID关联查询聊天室和聊天消息
-func (base ChatroomRepository) GetChatroomWithMessagesByUserId(userId uint, keywords string) ([]models.Chatroom, error) {
-	var chatroom []models.Chatroom
-	if err := base.Db.
-		Select([]string{
-			"chatroom.id", "chatroom.name",
-			"chatroom_messages.content", "chatroom_messages.created_at",
-		}).
-		Where("user_id = ?", userId).
-		Where("name like ?", "%"+keywords).
-		Preload("ChatroomMessages").
-		Find(&chatroom).Error; err != nil {
+// Get 查询聊天室表
+// @param []uint ids 聊天室ID集合
+// @param map[string]interface{} data 查询条件
+// @return info err 返回数据和一个错误
+func (base ChatroomRepository) Get(ids []uint, data map[string]interface{}) (info map[string]interface{}, err error) {
+	var (
+		page    PageInfo
+		total   int64
+		pageNum int64
+		list    []map[string]interface{}
+	)
+	if len(data) > 0 {
+		if err := mapstructure.WeakDecode(data, &page); err != nil {
+			panic(constants.MapToStruct)
+		}
+	}
+	// 总条数
+	base.Db.Model(&models.Chatroom{}).Count(&total)
+	// 计算总页数
+	if page.PageSize != 0 && total%page.PageSize != 0 {
+		pageNum = total / page.PageSize
+		pageNum++
+	}
+	err = base.Db.Model(&models.Chatroom{}).
+		Select([]string{"id", "name", "created_at"}).
+		Where("id IN ?", ids).
+		Where("name like ?", fmt.Sprintf("%%%s%%", data["keywords"])).
+		Limit(int(page.PageSize)).
+		Offset(int((page.Page - 1) * page.PageSize)).
+		Find(&list).Error
+	if err != nil {
 		return nil, err
 	}
 
-	return chatroom, nil
-}
-
-// UpdateByUserIdAndChatroomId 根据用户ID和聊天室ID更新聊天室数据
-// @param map[string]interface{} condition 查询条件
-// @param map[string]interface{} data 待更新数据
-// @return error 返回一个错误信息
-func (base ChatroomRepository) UpdateByUserIdAndChatroomId(condition map[string]interface{}, data map[string]interface{}) error {
-	var attributes = make(map[string]interface{})
-	// 驼峰转下划线
-	for k, v := range data {
-		k := utils.ToSnakeCase(k)
-		attributes[k] = v
+	data = map[string]interface{}{
+		"list":     list,          // 数据
+		"total":    total,         // 总条数
+		"pageNum":  pageNum,       // 总页数
+		"pageSize": page.PageSize, // 每页大小
+		"page":     page.Page,     // 当前页码
 	}
-	if err := base.Db.Where(condition).Updates(attributes).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
-// DeleteByUserIdAndChatroomId 根据用户ID和聊天室ID删除聊天室
-// @param map[string]interface{} condition 查询条件
-// @return error 返回一个错误信息
-func (base ChatroomRepository) DeleteByUserIdAndChatroomId(condition map[string]interface{}) error {
-	if err := base.Db.Delete(&base.Model, condition).Error; err != nil {
-		return err
-	}
-	return nil
+	return data, nil
 }

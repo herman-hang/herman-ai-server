@@ -37,6 +37,5 @@ func RemoveChatroom(ctx *gin.Context) {
 func List(ctx *gin.Context) {
 	context := app.Request{Context: ctx}
 	data := context.Params()
-
 	context.Json(ChatroomService.List(ChatroomValidate.List.Check(data), ctx))
 }

@@ -21,3 +21,19 @@ func ChatroomMessages(tx ...*gorm.DB) *ChatroomMessagesRepository {
 
 	return &ChatroomMessagesRepository{BaseRepository{Model: new(models.ChatroomMessages), Db: core.Db}}
 }
+
+// Last 查询最后一条消息
+// @param uint id 聊天室ID
+// @return chatroomMessages err 返回数据模型和一个错误
+func (base ChatroomMessagesRepository) Last(id uint) (info map[string]interface{}, err error) {
+	data := make(map[string]interface{})
+	err = base.Db.Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+		Where("chatroom_id = ?", id).
+		Last(&data).Error
+	if err != nil {
+		return data, err
+	}
+	core.Log.Debug(data)
+	return data, nil
+
+}

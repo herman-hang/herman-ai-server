@@ -116,7 +116,7 @@ func (base *BaseRepository) Delete(ids []uint) error {
 func (base *BaseRepository) IsExist(condition map[string]interface{}) bool {
 	data := make(map[string]interface{})
 	err := base.Db.Model(&base.Model).Where(condition).Find(&data).Error
-	if err != nil && len(data) > constants.LengthByZero {
+	if err == nil && len(data) > constants.LengthByZero {
 		return true
 	}
 	return false
@@ -157,6 +157,16 @@ func (base *BaseRepository) List(query string, fields []string, order string, pa
 		Find(&list).Error
 	if err != nil {
 		return nil, err
+	}
+	if len(list) > 0 {
+		for key, value := range list {
+			attributes := make(map[string]interface{})
+			for index, item := range value {
+				// 下划线转为小驼峰
+				attributes[utils.UnderscoreToLowerCamelCase(index)] = item
+			}
+			list[key] = attributes
+		}
 	}
 	data = map[string]interface{}{
 		"list":     list,          // 数据

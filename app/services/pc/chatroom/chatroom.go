@@ -19,25 +19,27 @@ func Add(data map[string]interface{}, ctx *gin.Context) {
 	model := users.(models.Users)
 
 	err := core.Db.Transaction(func(tx *gorm.DB) error {
-		// 发送者添加
-		_, err := repositories.Chatroom(tx).Insert(map[string]interface{}{
+		// 新增聊天室
+		chatroom, err := repositories.Chatroom(tx).Insert(map[string]interface{}{
 			"ai_type": data["aiType"],
 			"name":    data["name"],
-			"user_id": model.Id,
 		})
 		if err != nil {
 			return errors.New(ChatroomConstant.AddFail)
 		}
-		// 接收者添加
-		_, err = repositories.Chatroom(tx).Insert(map[string]interface{}{
-			"ai_type": data["aiType"],
-			"name":    data["name"],
-			"user_id": 0,
+		// 新增关联表
+		err = repositories.UserChatroom(tx).Create([]map[string]interface{}{
+			{
+				"user_id":     model.Id,
+				"chatroom_id": chatroom["id"],
+			}, {
+				"user_id":     0, // 0表示机器人
+				"chatroom_id": chatroom["id"],
+			},
 		})
 		if err != nil {
 			return errors.New(ChatroomConstant.AddFail)
 		}
-
 		return nil
 	})
 	if err != nil {
@@ -52,10 +54,16 @@ func Add(data map[string]interface{}, ctx *gin.Context) {
 func Modify(data map[string]interface{}, ctx *gin.Context) {
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
-	err := repositories.Chatroom().UpdateByUserIdAndChatroomId(map[string]interface{}{
-		"id":      data["id"],
-		"user_id": model.Id,
-	}, map[string]interface{}{
+	isExist := repositories.UserChatroom().IsExist(map[string]interface{}{
+		"chatroom_id": data["id"],
+		"user_id":     model.Id,
+	})
+
+	if !isExist {
+		panic(ChatroomConstant.DataNotExistMessage)
+	}
+
+	err := repositories.Chatroom().Update([]uint{data["id"].(uint)}, map[string]interface{}{
 		"name": data["name"],
 	})
 	if err != nil {
@@ -70,22 +78,62 @@ func Modify(data map[string]interface{}, ctx *gin.Context) {
 func Delete(data map[string]interface{}, ctx *gin.Context) {
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
-	err := repositories.Chatroom().DeleteByUserIdAndChatroomId(map[string]interface{}{
-		"id":      data["id"],
-		"user_id": model.Id,
+	core.Log.Debug(data)
+	isExist := repositories.UserChatroom().IsExist(map[string]interface{}{
+		"chatroom_id": data["id"],
+		"user_id":     model.Id,
 	})
+
+	if !isExist {
+		panic(ChatroomConstant.DataNotExistMessage)
+	}
+
+	err := repositories.Chatroom().Delete([]uint{data["id"].(uint)})
 	if err != nil {
 		panic(ChatroomConstant.DeleteFail)
 	}
+
 }
 
 func List(data map[string]interface{}, ctx *gin.Context) map[string]interface{} {
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
-	id, err := repositories.Chatroom().GetChatroomWithMessagesByUserId(model.Id, data["keywords"].(string))
+	ids, err := repositories.UserChatroom().GetChatroomIds(model.Id)
 	if err != nil {
-		return nil
+		panic(ChatroomConstant.GetDataFail)
 	}
-	core.Log.Debug(err, id)
-	return data
+	chatroom, err := repositories.Chatroom().Get(ids, data)
+	if err != nil {
+		panic(ChatroomConstant.GetDataFail)
+	}
+	list := chatroom["list"].([]map[string]interface{})
+
+	if len(list) > 0 {
+		for key, value := range list {
+			message, _ := repositories.ChatroomMessages().Last(value["id"].(uint))
+			createdAt := value["created_at"]
+			delete(list[key], "created_at")
+			if len(message) > 0 {
+				list[key]["createdAt"] = message["created_at"]
+				list[key]["newest"] = message["content"]
+			} else {
+				list[key]["createdAt"] = createdAt
+				list[key]["newest"] = ""
+			}
+
+			if message["sender_id"] != model.PhotoId {
+				find, _ := repositories.User().Find(map[string]interface{}{
+					"id": message["sender_id"],
+				}, []string{"id", "photo_id"})
+				list[key]["photoId"] = find["photoId"]
+			} else {
+				find, _ := repositories.User().Find(map[string]interface{}{
+					"id": message["receiver_id"],
+				}, []string{"id", "photo_id"})
+				list[key]["photoId"] = find["photoId"]
+			}
+		}
+	}
+
+	return chatroom
 }
