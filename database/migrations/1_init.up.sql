@@ -76,8 +76,7 @@ CREATE TABLE `admin_log`
     `updated_at` datetime                                                NOT NULL COMMENT '更新时间',
     `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX        `idx_admin_id`(`admin_id` ASC) USING BTREE COMMENT '管理员索引',
-    CONSTRAINT `fk_admin_log_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    INDEX        `idx_admin_id`(`admin_id` ASC) USING BTREE COMMENT '管理员索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -94,9 +93,7 @@ CREATE TABLE `admin_role`
     `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX        `idx_admin_id`(`admin_id` ASC) USING BTREE COMMENT '管理员角色索引',
-    INDEX        `idx_role_key`(`role_key` ASC) USING BTREE COMMENT '角色索引',
-    CONSTRAINT `fk_admin_role` FOREIGN KEY (`role_key`) REFERENCES `roles` (`role`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_admin_role_admin` FOREIGN KEY (`admin_id`) REFERENCES `admin` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+    INDEX        `idx_role_key`(`role_key` ASC) USING BTREE COMMENT '角色索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '管理员角色中间表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -116,7 +113,7 @@ CREATE TABLE `casbin_rule`
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `uk_casbin_rule`(`ptype` ASC, `v0` ASC, `v1` ASC, `v2` ASC, `v3` ASC, `v4` ASC, `v5` ASC) USING BTREE,
     UNIQUE INDEX `idx_casbin_rule`(`ptype` ASC, `v0` ASC, `v1` ASC, `v2` ASC, `v3` ASC, `v4` ASC, `v5` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'Casbin表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'Casbin表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for chatroom
@@ -127,14 +124,11 @@ CREATE TABLE `chatroom`
     `id`         int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `ai_type`    tinyint(4) NOT NULL COMMENT 'AI类型（1为GPT,2为绘画）',
     `name`       varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '聊天名称',
-    `user_id`    int(11) UNSIGNED NOT NULL COMMENT '用户ID',
     `created_at` datetime                                               NOT NULL COMMENT '创建时间',
     `updated_at` datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
-    PRIMARY KEY (`id`) USING BTREE,
-    INDEX        `idx_user_id`(`user_id` ASC) USING BTREE COMMENT '用户ID索引',
-    CONSTRAINT `fk_chatroom_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '聊天室表' ROW_FORMAT = Dynamic;
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '聊天室表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for chatroom_messages
@@ -152,7 +146,7 @@ CREATE TABLE `chatroom_messages`
     `deleted_at`  datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `idx_users_chatroom`(`sender_id` ASC, `receiver_id` ASC, `chatroom_id` ASC) USING BTREE COMMENT '用户聊天室索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '聊天室消息表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '聊天室消息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for dictionary
@@ -190,8 +184,7 @@ CREATE TABLE `dictionary_detail`
     `updated_at`    datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`    datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX           `idx_dictionary_id`(`dictionary_id` ASC, `code` ASC) USING BTREE COMMENT '数据字典索引',
-    CONSTRAINT `fk_dictionary_detail_dictionary` FOREIGN KEY (`dictionary_id`) REFERENCES `dictionary` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    INDEX           `idx_dictionary_id`(`dictionary_id` ASC, `code` ASC) USING BTREE COMMENT '数据字典索引'
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '数据字典明细表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
@@ -212,9 +205,8 @@ CREATE TABLE `file_chunks`
     `updated_at`   datetime NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
-    INDEX          `idx_file_chunks`(`file_id` ASC, `chunk_number` ASC, `hash` ASC) USING BTREE COMMENT '用户索引',
-    CONSTRAINT `fk_file_chunks_files` FOREIGN KEY (`file_id`) REFERENCES `files` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件分片信息表' ROW_FORMAT = DYNAMIC;
+    INDEX          `idx_file_chunks`(`file_id` ASC, `chunk_number` ASC, `hash` ASC) USING BTREE COMMENT '用户索引'
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件分片信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for files
@@ -236,7 +228,7 @@ CREATE TABLE `files`
     `deleted_at` datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX        `idx_files`(`creator_id` ASC, `hash` ASC) USING BTREE COMMENT '用户索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '文件信息表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for menus
@@ -310,7 +302,7 @@ CREATE TABLE `system`
     `updated_at`   datetime                                               NOT NULL COMMENT '更新时间',
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统设置表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统设置表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_chatroom
@@ -326,10 +318,8 @@ CREATE TABLE `user_chatroom`
     `deleted_at`  datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     INDEX         `idx_user_chatroom`(`user_id` ASC, `chatroom_id` ASC) USING BTREE COMMENT '用户聊天室索引',
-    INDEX         `fk_user_chatroom_chatroom`(`chatroom_id` ASC) USING BTREE,
-    CONSTRAINT `fk_user_chatroom_chatroom` FOREIGN KEY (`chatroom_id`) REFERENCES `chatroom` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_user_chatroom_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户聊天室关联表' ROW_FORMAT = Dynamic;
+    INDEX         `fk_user_chatroom_chatroom`(`chatroom_id` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户聊天室关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for users
@@ -359,7 +349,7 @@ CREATE TABLE `users`
     `deleted_at`   datetime NULL DEFAULT NULL COMMENT '删除时间',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `idx_user`(`user` ASC) USING BTREE COMMENT '用户索引'
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 SET
 FOREIGN_KEY_CHECKS = 1;
