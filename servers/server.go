@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/kernel/log"
-	middlewares2 "github.com/herman-hang/herman/middlewares"
+	middleware "github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers"
 	"github.com/herman-hang/herman/servers/settings"
 	"go.uber.org/zap"
@@ -28,7 +28,7 @@ func NewServer(host string, port uint) {
 	// 启动gin框架
 	engine := gin.New()
 	// 注册中间件
-	engine.Use(log.GinLogger()).Use(middlewares2.CatchError()).Use(middlewares2.ServerHandler())
+	engine.Use(log.GinLogger()).Use(middleware.CatchError()).Use(middleware.Cors()).Use(middleware.ServerHandler())
 	// 初始化路由
 	core.Engine = routers.InitRouter(engine)
 	// 启动服务
