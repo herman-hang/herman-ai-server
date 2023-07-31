@@ -20,6 +20,12 @@ func Router(router *gin.RouterGroup) {
 	router.GET("/users", UserController.FindUser)
 	// 获取聊天室列表
 	router.GET("/chat/rooms", ChatroomController.List)
+	// 添加聊天室
+	router.POST("/chat/rooms", ChatroomController.AddChatroom)
+	// 修改聊天室
+	router.PUT("/chat/rooms", ChatroomController.ModifyChatroom)
+	// 删除料提示
+	router.DELETE("/chat/rooms", ChatroomController.RemoveChatroom)
 	// 用户信息修改
 	router.PUT("/users", UserController.ModifyUser)
 	// 文件上传
