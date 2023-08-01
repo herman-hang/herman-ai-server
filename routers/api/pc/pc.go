@@ -2,10 +2,10 @@ package pc
 
 import (
 	"github.com/gin-gonic/gin"
-	AdminFileController "github.com/herman-hang/herman/app/controllers/admin/file"
-	ChatroomController "github.com/herman-hang/herman/app/controllers/pc/chatroom"
-	PcFileController "github.com/herman-hang/herman/app/controllers/pc/file"
-	UserController "github.com/herman-hang/herman/app/controllers/pc/user"
+	AdminFileController "github.com/herman-hang/herman/application/controllers/admin/file"
+	ChatroomController "github.com/herman-hang/herman/application/controllers/pc/chatroom"
+	PcFileController "github.com/herman-hang/herman/application/controllers/pc/file"
+	UserController "github.com/herman-hang/herman/application/controllers/pc/user"
 )
 
 // Router pc端相关路由

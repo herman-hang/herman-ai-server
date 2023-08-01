@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app/constants/admin/middleware"
-	"github.com/herman-hang/herman/app/models"
+	"github.com/herman-hang/herman/application/constants/admin/middleware"
+	"github.com/herman-hang/herman/application/models"
 	"github.com/herman-hang/herman/kernel/core"
 )
 
@@ -23,7 +23,7 @@ func CheckPermission() gin.HandlerFunc {
 		if info.Id == middleware.IsSuperAdmin {
 			return
 		}
-		success, _ := core.Casbin.Enforce(info.User, ctx.Request.URL.Path, ctx.Request.Method)
+		success, _ := core.Casbin().Enforce(info.User, ctx.Request.URL.Path, ctx.Request.Method)
 		if !success {
 			panic(middleware.PermissionDenied)
 		}

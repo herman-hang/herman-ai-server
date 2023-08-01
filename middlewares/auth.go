@@ -2,10 +2,10 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	MiddlewareConstant "github.com/herman-hang/herman/app/constants/admin/middleware"
-	"github.com/herman-hang/herman/app/repositories"
-	"github.com/herman-hang/herman/app/utils"
-	"github.com/herman-hang/herman/servers/settings"
+	MiddlewareConstant "github.com/herman-hang/herman/application/constants/admin/middleware"
+	"github.com/herman-hang/herman/application/repositories"
+	"github.com/herman-hang/herman/kernel/app"
+	"github.com/herman-hang/herman/kernel/utils"
 	"strings"
 )
 
@@ -42,7 +42,7 @@ func Jwt(guard string) gin.HandlerFunc {
 func VerifyRoute(route string, method string, routes map[string]string) bool {
 	attributes := make(map[string]string)
 	for k, v := range routes {
-		attributes[settings.Config.AppPrefix+k] = v
+		attributes[app.Config.AppPrefix+k] = v
 	}
 
 	if value, ok := attributes[route]; !ok {

@@ -2,14 +2,14 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app"
-	CaptchaController "github.com/herman-hang/herman/app/controllers/common/captcha"
+	"github.com/herman-hang/herman/application"
+	CaptchaController "github.com/herman-hang/herman/application/controllers/common/captcha"
+	"github.com/herman-hang/herman/kernel/app"
 	middleware "github.com/herman-hang/herman/middlewares"
 	"github.com/herman-hang/herman/routers/api/admin"
 	"github.com/herman-hang/herman/routers/api/mobile"
 	"github.com/herman-hang/herman/routers/api/pc"
 	"github.com/herman-hang/herman/routers/api/user"
-	"github.com/herman-hang/herman/servers/settings"
 )
 
 // InitRouter 初始化路由
@@ -18,13 +18,13 @@ import (
 func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 	// 测试路由
 	rootEngine.GET("/", func(context *gin.Context) {
-		response := app.Request{Context: context}
-		response.Success(app.D(map[string]interface{}{
+		response := application.Request{Context: context}
+		response.Success(application.D(map[string]interface{}{
 			"message": "Welcome to Herman!",
 		}))
 	})
 	// 设置路由前缀
-	api := rootEngine.Group(settings.Config.AppPrefix)
+	api := rootEngine.Group(app.Config.AppPrefix)
 	// 获取验证码
 	api.GET("/captcha", CaptchaController.GetCaptcha)
 	// 检查验证码正确性

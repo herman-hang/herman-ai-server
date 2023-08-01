@@ -3,7 +3,7 @@ package admin
 import (
 	"fmt"
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/application/repositories"
 	"github.com/herman-hang/herman/database/seeders/admin"
 	"github.com/herman-hang/herman/database/seeders/role"
 	"github.com/herman-hang/herman/tests"

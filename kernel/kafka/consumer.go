@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/fatih/color"
-	"github.com/herman-hang/herman/kernel/core"
-	"github.com/herman-hang/herman/servers/settings"
+	"github.com/herman-hang/herman/kernel/app"
 	"go.uber.org/zap"
 	"sync"
 )
@@ -21,8 +20,8 @@ type Consumer struct {
 func (k *Consumer) Exec() {
 	config := sarama.NewConfig()
 	consumer, err := sarama.NewConsumer([]string{fmt.Sprintf("%s:%d",
-		settings.Config.Kafka.Host,
-		settings.Config.Kafka.Port,
+		app.Config.Kafka.Host,
+		app.Config.Kafka.Port,
 	)}, config)
 	if err != nil {
 		zap.S().Error(color.RedString(fmt.Sprintf("New consumer err: %v", err)))
@@ -72,7 +71,7 @@ func (k *Consumer) consumeByPartition(consumer sarama.Consumer, topic string, pa
 		}
 	}(partitionConsumer)
 	for message := range partitionConsumer.Messages() {
-		core.Log.Infof("[Consumer] partitionid: %d; offset:%d, value: %s\n", message.Partition, message.Offset, string(message.Value))
+		app.Log.Infof("[Consumer] partitionid: %d; offset:%d, value: %s\n", message.Partition, message.Offset, string(message.Value))
 		k.MessageQueue <- message.Value
 	}
 }

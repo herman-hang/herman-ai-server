@@ -2,12 +2,12 @@ package admin
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app/controllers/admin/admin"
-	"github.com/herman-hang/herman/app/controllers/admin/dictionary"
-	FileController "github.com/herman-hang/herman/app/controllers/admin/file"
-	MenuController "github.com/herman-hang/herman/app/controllers/admin/menu"
-	RoleController "github.com/herman-hang/herman/app/controllers/admin/role"
-	SystemController "github.com/herman-hang/herman/app/controllers/admin/system"
+	"github.com/herman-hang/herman/application/controllers/admin/admin"
+	"github.com/herman-hang/herman/application/controllers/admin/dictionary"
+	FileController "github.com/herman-hang/herman/application/controllers/admin/file"
+	MenuController "github.com/herman-hang/herman/application/controllers/admin/menu"
+	RoleController "github.com/herman-hang/herman/application/controllers/admin/role"
+	SystemController "github.com/herman-hang/herman/application/controllers/admin/system"
 )
 
 // Router 后台相关路由

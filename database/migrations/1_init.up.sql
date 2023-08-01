@@ -304,6 +304,11 @@ CREATE TABLE `system`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统设置表' ROW_FORMAT = DYNAMIC;
 
+INSERT INTO `system`
+VALUES (1, 'Herman框架', '专注于后端快速上手的一款框架',
+        'Herman基于Gin，Casbin，Kafka，Mysql，Redis，Zap，Cobra，Grom开发，专注于后端快速上手的一款开源，简单，轻量框架。 ',
+        'herman,golang,gin,kafka,casbin,mysql,redis,gorm,cobra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        '2023-03-22 22:10:14', '2023-03-22 22:10:17', NULL);
 -- ----------------------------
 -- Table structure for user_chatroom
 -- ----------------------------

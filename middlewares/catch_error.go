@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/gin-gonic/gin"
-	"github.com/herman-hang/herman/app"
+	"github.com/herman-hang/herman/application"
 	"net/http"
 	"runtime"
 	"strings"
@@ -14,7 +14,7 @@ import (
 // @return gin.HandlerFunc 返回一个中间件上下文
 func CatchError() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		context := app.Request{Context: ctx}
+		context := application.Request{Context: ctx}
 		defer func() {
 			if data := recover(); data != nil {
 				switch data.(type) {

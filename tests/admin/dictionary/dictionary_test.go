@@ -3,8 +3,8 @@ package dictionary
 import (
 	"fmt"
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/herman-hang/herman/app/constants"
-	"github.com/herman-hang/herman/app/repositories"
+	"github.com/herman-hang/herman/application/constants"
+	"github.com/herman-hang/herman/application/repositories"
 	"github.com/herman-hang/herman/database/seeders/dictionary"
 	"github.com/herman-hang/herman/tests"
 	"github.com/stretchr/testify/suite"
