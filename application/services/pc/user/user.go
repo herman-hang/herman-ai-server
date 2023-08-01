@@ -8,7 +8,7 @@ import (
 	"github.com/herman-hang/herman/application/models"
 	"github.com/herman-hang/herman/application/repositories"
 	"github.com/herman-hang/herman/kernel/core"
-	utils2 "github.com/herman-hang/herman/kernel/utils"
+	"github.com/herman-hang/herman/kernel/utils"
 	"time"
 )
 
@@ -38,9 +38,9 @@ func Login(data map[string]interface{}, c *gin.Context) interface{} {
 	if len(info) == 0 {
 		info, err := repositories.User().Insert(map[string]interface{}{
 			"user":       data["phone"],
-			"password":   utils2.HashEncode(generateRandomPassword(10)),
+			"password":   utils.HashEncode(generateRandomPassword(10)),
 			"phone":      data["phone"],
-			"nickname":   fmt.Sprintf("用户%s", utils2.GenerateVerificationCode()),
+			"nickname":   fmt.Sprintf("用户%s", utils.GenerateVerificationCode()),
 			"loginOutIp": c.ClientIP(),
 			"loginOutAt": time.Now().Format("2006-01-02 15:04:05"),
 			"loginTotal": 1,
@@ -48,7 +48,7 @@ func Login(data map[string]interface{}, c *gin.Context) interface{} {
 		if err != nil {
 			panic(UserConstant.LoginFail)
 		}
-		return utils2.GenerateToken(&utils2.Claims{Uid: info["id"].(uint), Guard: "pc"})
+		return utils.GenerateToken(&utils.Claims{Uid: info["id"].(uint), Guard: "pc"})
 	} else {
 		// 更新用户登录信息
 		err := repositories.User().Update([]uint{info["id"].(uint)}, map[string]interface{}{
@@ -60,7 +60,7 @@ func Login(data map[string]interface{}, c *gin.Context) interface{} {
 			panic(UserConstant.LoginFail)
 		}
 		// 返回token
-		return utils2.GenerateToken(&utils2.Claims{Uid: info["id"].(uint), Guard: "pc"})
+		return utils.GenerateToken(&utils.Claims{Uid: info["id"].(uint), Guard: "pc"})
 	}
 }
 
@@ -69,7 +69,7 @@ func Login(data map[string]interface{}, c *gin.Context) interface{} {
 // @return void
 func SendCode(data map[string]interface{}, ctx *gin.Context) {
 	// 生成验证码
-	code := utils2.GenerateVerificationCode()
+	code := utils.GenerateVerificationCode()
 	data["code"] = code
 	data["content"] = fmt.Sprintf("【Herman AI】您的验证码是：%s，有效期为5分钟，请不要把验证码泄露给其他人。", code)
 	//go exec(data)

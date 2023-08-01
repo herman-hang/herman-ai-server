@@ -36,6 +36,7 @@ func (base ChatroomRepository) Get(ids []uint, data map[string]interface{}) (inf
 		pageNum int64
 		list    []map[string]interface{}
 	)
+
 	if len(data) > 0 {
 		if err := mapstructure.WeakDecode(data, &page); err != nil {
 			panic(constants.MapToStruct)
@@ -60,12 +61,13 @@ func (base ChatroomRepository) Get(ids []uint, data map[string]interface{}) (inf
 		return nil, err
 	}
 
-	data = map[string]interface{}{
+	info = map[string]interface{}{
 		"list":     list,          // 数据
 		"total":    total,         // 总条数
 		"pageNum":  pageNum,       // 总页数
 		"pageSize": page.PageSize, // 每页大小
 		"page":     page.Page,     // 当前页码
 	}
-	return data, nil
+
+	return info, nil
 }

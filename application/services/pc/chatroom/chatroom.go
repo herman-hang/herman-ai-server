@@ -2,6 +2,7 @@ package chatroom
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ChatroomConstant "github.com/herman-hang/herman/application/constants/pc/chatroom"
 	"github.com/herman-hang/herman/application/models"
@@ -9,6 +10,8 @@ import (
 	"github.com/herman-hang/herman/kernel/app"
 	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
+	"sort"
+	"time"
 )
 
 // Add 添加聊天室
@@ -104,6 +107,7 @@ func List(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
 	ids, err := repositories.UserChatroom().GetChatroomIds(model.Id)
+
 	if err != nil {
 		panic(ChatroomConstant.GetDataFail)
 	}
@@ -123,7 +127,7 @@ func List(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 				list[key]["newest"] = message["content"]
 			} else {
 				list[key]["createdAt"] = createdAt
-				list[key]["newest"] = ""
+				list[key]["newest"] = "　"
 			}
 
 			if message["sender_id"] != model.PhotoId {
@@ -138,6 +142,13 @@ func List(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 				list[key]["photoId"] = find["photoId"]
 			}
 		}
+		// 排序（倒叙）
+		sort.Slice(list, func(i, j int) bool {
+			createdAtOne, _ := time.Parse("2006-01-02 15:04:05 -0700 MST", fmt.Sprintf("%s", list[i]["createdAt"]))
+			createdAtTwo, _ := time.Parse("2006-01-02 15:04:05 -0700 MST", fmt.Sprintf("%s", list[j]["createdAt"]))
+			return createdAtOne.After(createdAtTwo)
+		})
+		chatroom["list"] = list
 	}
 
 	return chatroom

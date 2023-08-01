@@ -25,6 +25,7 @@ func CatchError() gin.HandlerFunc {
 					data := data.(map[string]interface{})
 					context.Json(nil, data["message"], data["code"])
 				default:
+					fmt.Println(color.RedString(fmt.Sprintf("%s", data)))
 					printStack()
 				}
 				ctx.Abort()
