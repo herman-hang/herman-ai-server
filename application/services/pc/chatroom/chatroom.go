@@ -7,7 +7,6 @@ import (
 	ChatroomConstant "github.com/herman-hang/herman/application/constants/pc/chatroom"
 	"github.com/herman-hang/herman/application/models"
 	"github.com/herman-hang/herman/application/repositories"
-	"github.com/herman-hang/herman/kernel/app"
 	"github.com/herman-hang/herman/kernel/core"
 	"gorm.io/gorm"
 	"sort"
@@ -82,7 +81,6 @@ func Modify(data map[string]interface{}, ctx *gin.Context) {
 func Delete(data map[string]interface{}, ctx *gin.Context) {
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
-	app.Log.Debug(data)
 	isExist := repositories.UserChatroom().IsExist(map[string]interface{}{
 		"chatroom_id": data["id"],
 		"user_id":     model.Id,
@@ -107,7 +105,6 @@ func List(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
 	ids, err := repositories.UserChatroom().GetChatroomIds(model.Id)
-
 	if err != nil {
 		panic(ChatroomConstant.GetDataFail)
 	}
@@ -116,30 +113,35 @@ func List(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 		panic(ChatroomConstant.GetDataFail)
 	}
 	list := chatroom["list"].([]map[string]interface{})
-
 	if len(list) > 0 {
 		for key, value := range list {
 			message, _ := repositories.ChatroomMessages().Last(value["id"].(uint))
-			createdAt := value["created_at"]
-			delete(list[key], "created_at")
+			createdAt := value["createdAt"]
+			delete(list[key], "createdAt")
 			if len(message) > 0 {
-				list[key]["createdAt"] = message["created_at"]
+				var userId uint
+				list[key]["createdAt"] = message["createdAt"]
 				list[key]["newest"] = message["content"]
+				if message["senderId"] != model.PhotoId {
+					userId = message["senderId"].(uint)
+				} else {
+					userId = message["receiverId"].(uint)
+				}
+				user, err := repositories.User().Find(map[string]interface{}{
+					"id": userId,
+				}, []string{"id", "photo_id"})
+				if err != nil {
+					panic(ChatroomConstant.GetDataFail)
+				}
+				if len(user) > 0 {
+					list[key]["photoId"] = user["photoId"]
+				} else {
+					list[key]["photoId"] = 0
+				}
 			} else {
 				list[key]["createdAt"] = createdAt
-				list[key]["newest"] = ""
-			}
-
-			if message["sender_id"] != model.PhotoId {
-				find, _ := repositories.User().Find(map[string]interface{}{
-					"id": message["sender_id"],
-				}, []string{"id", "photo_id"})
-				list[key]["photoId"] = find["photoId"]
-			} else {
-				find, _ := repositories.User().Find(map[string]interface{}{
-					"id": message["receiver_id"],
-				}, []string{"id", "photo_id"})
-				list[key]["photoId"] = find["photoId"]
+				list[key]["newest"] = nil
+				list[key]["photoId"] = 0
 			}
 		}
 		// 排序（倒叙）
@@ -179,6 +181,52 @@ func Send(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 	}
 
 	return map[string]interface{}{
-		"id": newInfo["id"],
+		"id":         newInfo["id"],
+		"isMe":       true,
+		"senderId":   model.Id,
+		"receiverId": info["userId"],
+		"photoId":    model.PhotoId,
+		"content":    data["content"],
+		"chatroomId": chatroomId,
+		"createdAt":  newInfo["createdAt"],
 	}
+}
+
+// Find 查找聊天室消息
+// @param map data 前端请求数据
+// @param *gin.Context ctx 上下文
+// @return map[string]interface{} 返回一个数据集合
+func Find(data map[string]interface{}, ctx *gin.Context) map[string]interface{} {
+	users, _ := ctx.Get("pc")
+	model := users.(models.Users)
+	chatroomMessages, err := repositories.ChatroomMessages().FindByChatroomId(data)
+	if err != nil {
+		panic(ChatroomConstant.GetDataFail)
+	}
+	list := chatroomMessages["list"].([]map[string]interface{})
+	for key, value := range list {
+		var userId uint
+		if value["senderId"] == model.Id {
+			list[key]["isMe"] = true
+			userId = value["senderId"].(uint)
+		} else {
+			list[key]["isMe"] = false
+			userId = value["receiverId"].(uint)
+		}
+		user, err := repositories.User().Find(map[string]interface{}{
+			"id": userId,
+		}, []string{"id", "photo_id"})
+		if err != nil {
+			panic(ChatroomConstant.GetDataFail)
+		}
+		if len(user) > 0 {
+			list[key]["photoId"] = user["photoId"]
+		} else {
+			list[key]["photoId"] = 0
+		}
+	}
+
+	chatroomMessages["list"] = list
+
+	return chatroomMessages
 }

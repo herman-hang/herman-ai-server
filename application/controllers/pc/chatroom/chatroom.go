@@ -49,3 +49,11 @@ func SendMessage(ctx *gin.Context) {
 	data := context.Params()
 	context.Json(ChatroomService.Send(ChatroomValidate.Send.Check(data), ctx))
 }
+
+// FindMessages 聊天室消息列表
+// @param *gin.Context ctx 上下文
+func FindMessages(ctx *gin.Context) {
+	context := application.Request{Context: ctx}
+	data := context.Params()
+	context.Json(ChatroomService.Find(ChatroomValidate.Find.Check(data), ctx))
+}

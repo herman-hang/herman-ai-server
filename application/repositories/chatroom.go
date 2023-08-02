@@ -5,6 +5,7 @@ import (
 	"github.com/herman-hang/herman/application/constants"
 	"github.com/herman-hang/herman/application/models"
 	"github.com/herman-hang/herman/kernel/core"
+	"github.com/herman-hang/herman/kernel/utils"
 	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
 )
@@ -61,7 +62,16 @@ func (base ChatroomRepository) Get(ids []uint, data map[string]interface{}) (inf
 	if err != nil {
 		return nil, err
 	}
-
+	if len(list) > 0 {
+		for key, value := range list {
+			attributes := make(map[string]interface{})
+			for index, item := range value {
+				// 下划线转为小驼峰
+				attributes[utils.UnderscoreToLowerCamelCase(index)] = item
+			}
+			list[key] = attributes
+		}
+	}
 	info = map[string]interface{}{
 		"list":     list,          // 数据
 		"total":    total,         // 总条数
