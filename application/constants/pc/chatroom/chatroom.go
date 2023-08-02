@@ -6,4 +6,5 @@ const (
 	DeleteFail          = "删除失败"
 	DataNotExistMessage = "数据不存在"
 	GetDataFail         = "获取数据失败"
+	SendMessageFail     = "发送失败"
 )

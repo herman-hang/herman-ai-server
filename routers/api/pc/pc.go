@@ -26,6 +26,8 @@ func Router(router *gin.RouterGroup) {
 	router.PUT("/chat/rooms", ChatroomController.ModifyChatroom)
 	// 删除聊天室
 	router.DELETE("/chat/rooms", ChatroomController.RemoveChatroom)
+	// 发送消息
+	router.POST("/chat/send/messages", ChatroomController.SendMessage)
 	// 用户信息修改
 	router.PUT("/users", UserController.ModifyUser)
 	// 文件上传

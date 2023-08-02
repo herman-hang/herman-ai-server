@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"github.com/herman-hang/herman/application/constants"
-	utils2 "github.com/herman-hang/herman/kernel/utils"
+	utils "github.com/herman-hang/herman/kernel/utils"
 	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
 	"time"
@@ -35,7 +35,7 @@ func (base *BaseRepository) Insert(data map[string]interface{}) (toMap map[strin
 	}
 	// 模型拷贝
 	tempStruct := base.Model
-	toMap, err = utils2.ToMap(tempStruct, "json")
+	toMap, err = utils.ToMap(tempStruct, "json")
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (base *BaseRepository) Find(condition map[string]interface{}, fields ...[]s
 	if len(data) > 0 {
 		for k, v := range data {
 			// 下划线转为小驼峰
-			info[utils2.UnderscoreToLowerCamelCase(k)] = v
+			info[utils.UnderscoreToLowerCamelCase(k)] = v
 		}
 	}
 	return info, nil
@@ -91,7 +91,7 @@ func (base *BaseRepository) Update(ids []uint, data map[string]interface{}) erro
 	var attributes = make(map[string]interface{})
 	// 驼峰转下划线
 	for k, v := range data {
-		k := utils2.ToSnakeCase(k)
+		k := utils.ToSnakeCase(k)
 		attributes[k] = v
 	}
 	if err := base.Db.Model(&base.Model).Where("id IN (?)", ids).Updates(attributes).Error; err != nil {
@@ -163,7 +163,7 @@ func (base *BaseRepository) List(query string, fields []string, order string, pa
 			attributes := make(map[string]interface{})
 			for index, item := range value {
 				// 下划线转为小驼峰
-				attributes[utils2.UnderscoreToLowerCamelCase(index)] = item
+				attributes[utils.UnderscoreToLowerCamelCase(index)] = item
 			}
 			list[key] = attributes
 		}

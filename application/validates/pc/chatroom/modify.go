@@ -7,6 +7,6 @@ var Modify = validates.Validates{Validate: ModifyValidate{}}
 
 // ModifyValidate 管理员添加验证规则
 type ModifyValidate struct {
-	Id   uint   `json:"id" validate:"required,number"`
-	Name string `json:"name" validate:"required,max=20"`
+	Id   uint   `json:"id" validate:"required,number" label:"聊天ID"`
+	Name string `json:"name" validate:"required,max=20" label:"名称"`
 }

@@ -54,6 +54,7 @@ func (base ChatroomRepository) Get(ids []uint, data map[string]interface{}) (inf
 		Where("id IN ?", ids).
 		Where("ai_type", data["aiType"]).
 		Where("name like ?", fmt.Sprintf("%%%s%%", data["keywords"])).
+		Order("created_at desc").
 		Limit(int(page.PageSize)).
 		Offset(int((page.Page - 1) * page.PageSize)).
 		Find(&list).Error

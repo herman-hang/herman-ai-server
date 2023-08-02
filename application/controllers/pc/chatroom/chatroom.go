@@ -41,3 +41,11 @@ func List(ctx *gin.Context) {
 	data := context.Params()
 	context.Json(ChatroomService.List(ChatroomValidate.List.Check(data), ctx))
 }
+
+// SendMessage 聊天室列表
+// @param *gin.Context ctx 上下文
+func SendMessage(ctx *gin.Context) {
+	context := application.Request{Context: ctx}
+	data := context.Params()
+	context.Json(ChatroomService.Send(ChatroomValidate.Send.Check(data), ctx))
+}

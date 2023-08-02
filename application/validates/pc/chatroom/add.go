@@ -9,6 +9,6 @@ var Add = validates.Validates{Validate: AddValidate{}}
 
 // AddValidate 管理员添加验证规则
 type AddValidate struct {
-	AiType int    `json:"aiType" validate:"required,number,oneof=1 2"`
-	Name   string `json:"name" validate:"required,max=20"`
+	AiType int    `json:"aiType" validate:"required,number,oneof=1 2" label:"AI类型"`
+	Name   string `json:"name" validate:"required,max=20" label:"名称"`
 }
