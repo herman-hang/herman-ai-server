@@ -5,7 +5,7 @@ import (
 	"github.com/herman-hang/herman/application/constants"
 	CaptchaConstant "github.com/herman-hang/herman/application/constants/common/captcha"
 	"github.com/herman-hang/herman/application/validates"
-	utils2 "github.com/herman-hang/herman/kernel/utils"
+	utils "github.com/herman-hang/herman/kernel/utils"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -42,13 +42,13 @@ func Login(data map[string]interface{}) (toMap map[string]interface{}) {
 	}
 
 	// 验证码验证
-	err := utils2.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Verification(fmt.Sprintf("%s", data["token"]),
+	err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Verification(fmt.Sprintf("%s", data["token"]),
 		fmt.Sprintf("%s", data["pointJson"]))
 	if err != nil {
 		panic(CaptchaConstant.CheckCaptchaError)
 	}
 
-	toMap, err = utils2.ToMap(&login, "json")
+	toMap, err = utils.ToMap(&login, "json")
 	if err != nil {
 		panic(constants.StructToMap)
 	}
@@ -71,14 +71,14 @@ func SendCode(data map[string]interface{}) (toMap map[string]interface{}) {
 	}
 
 	// 验证码二次验证
-	err := utils2.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Check(fmt.Sprintf("%s", data["token"]),
+	err := utils.Factory().GetService(fmt.Sprintf("%s", data["captchaType"])).Check(fmt.Sprintf("%s", data["token"]),
 		fmt.Sprintf("%s", data["pointJson"]))
 
 	if err != nil {
 		panic(CaptchaConstant.CheckCaptchaError)
 	}
 
-	toMap, err = utils2.ToMap(&send, "json")
+	toMap, err = utils.ToMap(&send, "json")
 	if err != nil {
 		panic(constants.StructToMap)
 	}

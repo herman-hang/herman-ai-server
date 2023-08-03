@@ -5,6 +5,7 @@ import (
 	AdminFileController "github.com/herman-hang/herman/application/controllers/admin/file"
 	ChatroomController "github.com/herman-hang/herman/application/controllers/pc/chatroom"
 	PcFileController "github.com/herman-hang/herman/application/controllers/pc/file"
+	OpenAiController "github.com/herman-hang/herman/application/controllers/pc/openai"
 	UserController "github.com/herman-hang/herman/application/controllers/pc/user"
 )
 
@@ -30,6 +31,8 @@ func Router(router *gin.RouterGroup) {
 	router.POST("/chat/send/messages", ChatroomController.SendMessage)
 	// 获取聊天室消息列表
 	router.GET("/chat/messages", ChatroomController.FindMessages)
+	// GPT流式响应
+	router.GET("/chat/gpt4/stream", OpenAiController.GPT4)
 	// 用户信息修改
 	router.PUT("/users", UserController.ModifyUser)
 	// 文件上传

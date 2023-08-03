@@ -140,3 +140,7 @@ storage:
     region:
     # 存储路径(路径开头结尾不需要加"/")
     path:
+
+# openAI配置
+open_ai:
+  secret_key:
