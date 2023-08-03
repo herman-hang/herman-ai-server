@@ -32,7 +32,7 @@ func Router(router *gin.RouterGroup) {
 	// 获取聊天室消息列表
 	router.GET("/chat/messages", ChatroomController.FindMessages)
 	// GPT流式响应
-	router.GET("/chat/gpt4/stream", OpenAiController.GPT4)
+	router.GET("/chat/gpt/stream", OpenAiController.GPT)
 	// 用户信息修改
 	router.PUT("/users", UserController.ModifyUser)
 	// 文件上传

@@ -29,7 +29,6 @@ func InitRouter(rootEngine *gin.Engine) *gin.Engine {
 	api.GET("/captcha", CaptchaController.GetCaptcha)
 	// 检查验证码正确性
 	api.POST("/captcha/check", CaptchaController.CheckCaptcha)
-
 	// 前台模块
 	userRouter := api.Group("/user", middleware.Jwt("user"))
 	{
