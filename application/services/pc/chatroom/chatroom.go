@@ -165,7 +165,6 @@ func Send(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 	model := users.(models.Users)
 	chatroomId := data["chatroomId"].(uint)
 	err, info := repositories.UserChatroom().FindByChatroomId(chatroomId, model.Id)
-
 	if err != nil || len(info) == 0 {
 		panic(ChatroomConstant.SendMessageFail)
 	}

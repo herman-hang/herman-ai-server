@@ -139,7 +139,7 @@ CREATE TABLE `chatroom_messages`
     `id`          int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `sender_id`   int(11) UNSIGNED NOT NULL COMMENT '发送者ID',
     `receiver_id` int(11) UNSIGNED NOT NULL COMMENT '接收者ID',
-    `content`     text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '内容',
+    `content`     text CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '内容',
     `chatroom_id` int(11) UNSIGNED NOT NULL COMMENT '聊天室ID',
     `created_at`  datetime NOT NULL COMMENT '创建时间',
     `updated_at`  datetime NOT NULL COMMENT '更新时间',

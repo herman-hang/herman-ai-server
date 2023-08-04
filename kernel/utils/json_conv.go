@@ -152,3 +152,14 @@ func UnderscoreToLowerCamelCase(data string) string {
 	}
 	return strings.Join(parts, "")
 }
+
+// MapToJson 将map转为json
+// @param map[string]interface{} data 待转数据
+// @return string error 返回一个字符串和一个错误
+func MapToJson(data map[string]interface{}) (string, error) {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonData), nil
+}
