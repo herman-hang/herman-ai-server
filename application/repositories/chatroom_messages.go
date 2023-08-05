@@ -72,6 +72,7 @@ func (base ChatroomMessagesRepository) FindByChatroomId(data map[string]interfac
 	err = base.Db.Model(&models.ChatroomMessages{}).
 		Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
 		Where("chatroom_id = ?", data["chatroomId"]).
+		Order("created_at desc").
 		Limit(int(page.PageSize)).
 		Offset(int((page.Page - 1) * page.PageSize)).
 		Find(&list).Error
@@ -94,4 +95,18 @@ func (base ChatroomMessagesRepository) FindByChatroomId(data map[string]interfac
 	}
 
 	return info, nil
+}
+
+// FindNewSexDataByChatroomId 查询聊天室最新5条消息
+// @param uint chatroomId 聊天室ID
+// @return []models.ChatroomMessages err 返回数据和一个错误
+func (base ChatroomMessagesRepository) FindNewSexDataByChatroomId(chatroomId uint) ([]models.ChatroomMessages, error) {
+	var messages []models.ChatroomMessages
+	err := base.Db.Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+		Where("chatroom_id = ?", chatroomId).
+		Order("created_at desc").Limit(5).Find(&messages).Error
+	if err != nil {
+		return nil, err
+	}
+	return messages, nil
 }
