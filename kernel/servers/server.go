@@ -27,7 +27,11 @@ func NewServer(host string, port uint) {
 	// 启动gin框架
 	engine := gin.New()
 	// 注册中间件
-	engine.Use(log.GinLogger()).Use(middleware.Cors()).Use(middleware.CatchError())
+	engine.Use(log.GinLogger()).Use(middleware.CatchError())
+	// 跨域配置判断
+	if app.Config.Cores.IsOpen {
+		engine.Use(middleware.Cors())
+	}
 	// 初始化路由
 	app.Engine = routers.InitRouter(engine)
 	// 启动服务

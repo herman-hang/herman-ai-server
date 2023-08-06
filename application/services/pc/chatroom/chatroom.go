@@ -1,6 +1,7 @@
 package chatroom
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -160,35 +161,13 @@ func List(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 // @param map data 前端请求数据
 // @param *gin.Context ctx 上下文
 // @return map[string]interface{} 返回一个数据集合
-func Send(data map[string]interface{}, ctx *gin.Context) map[string]interface{} {
+func Send(data map[string]interface{}, ctx *gin.Context) {
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
 	chatroomId := data["chatroomId"].(uint)
-	err, info := repositories.UserChatroom().FindByChatroomId(chatroomId, model.Id)
-	if err != nil || len(info) == 0 {
-		panic(ChatroomConstant.SendMessageFail)
-	}
-
-	newInfo, err := repositories.ChatroomMessages().Insert(map[string]interface{}{
-		"senderId":   model.Id,
-		"receiverId": info["userId"],
-		"content":    data["content"],
-		"chatroomId": chatroomId,
-	})
-	if err != nil {
-		panic(ChatroomConstant.SendMessageFail)
-	}
-
-	return map[string]interface{}{
-		"id":         newInfo["id"],
-		"isMe":       true,
-		"senderId":   model.Id,
-		"receiverId": info["userId"],
-		"photoId":    model.PhotoId,
-		"content":    data["content"],
-		"chatroomId": chatroomId,
-		"createdAt":  newInfo["createdAt"],
-	}
+	// 设置上下文
+	c := context.Background()
+	core.Redis().Set(c, fmt.Sprintf("user:%d-chatroom:%d", model.Id, chatroomId), data["content"].(string), time.Second*60)
 }
 
 // Find 查找聊天室消息
