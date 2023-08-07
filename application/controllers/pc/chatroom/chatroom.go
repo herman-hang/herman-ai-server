@@ -12,8 +12,7 @@ import (
 func AddChatroom(ctx *gin.Context) {
 	context := application.Request{Context: ctx}
 	data := context.Params()
-	ChatroomService.Add(ChatroomValidate.Add.Check(data), ctx)
-	context.Json(nil)
+	context.Json(ChatroomService.Add(ChatroomValidate.Add.Check(data), ctx))
 }
 
 // ModifyChatroom 修改聊天室

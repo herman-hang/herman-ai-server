@@ -18,10 +18,10 @@ import (
 // @param map data 前端请求数据
 // @param *gin.Context ctx 上下文
 // @return void
-func Add(data map[string]interface{}, ctx *gin.Context) {
+func Add(data map[string]interface{}, ctx *gin.Context) map[string]interface{} {
 	users, _ := ctx.Get("pc")
 	model := users.(models.Users)
-
+	var chatroomId uint
 	err := core.Db().Transaction(func(tx *gorm.DB) error {
 		// 新增聊天室
 		chatroom, err := repositories.Chatroom(tx).Insert(map[string]interface{}{
@@ -31,6 +31,7 @@ func Add(data map[string]interface{}, ctx *gin.Context) {
 		if err != nil {
 			return errors.New(ChatroomConstant.AddFail)
 		}
+		chatroomId = chatroom["id"].(uint)
 		// 新增关联表
 		err = repositories.UserChatroom(tx).Create([]map[string]interface{}{
 			{
@@ -48,6 +49,10 @@ func Add(data map[string]interface{}, ctx *gin.Context) {
 	})
 	if err != nil {
 		panic(err.Error())
+	}
+
+	return map[string]interface{}{
+		"id": chatroomId,
 	}
 }
 

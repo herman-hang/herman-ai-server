@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	UserConstant "github.com/herman-hang/herman/application/constants/admin/user"
 	ChatroomConstant "github.com/herman-hang/herman/application/constants/pc/chatroom"
+	OpenaiConstant "github.com/herman-hang/herman/application/constants/pc/openai"
 	"github.com/herman-hang/herman/application/repositories"
 	"github.com/herman-hang/herman/kernel/app"
 	"github.com/herman-hang/herman/kernel/core"
@@ -134,9 +135,16 @@ func processStream(c *gin.Context,
 			contextMessages = append([]openai.ChatCompletionMessage{newMessage}, contextMessages...)
 		}
 	}
+	// 根据上下文给最大 token 数值
+	var numTokens int
+	if len(contextMessages) > OpenaiConstant.NewFiveData {
+		numTokens = NumTokensFromMessages(contextMessages, openai.GPT3Dot5Turbo)
+	} else {
+		numTokens = 1000
+	}
 	request := openai.ChatCompletionRequest{
 		Model:     openai.GPT3Dot5Turbo,
-		MaxTokens: NumTokensFromMessages(contextMessages, openai.GPT3Dot5Turbo),
+		MaxTokens: numTokens,
 		Messages:  contextMessages,
 		Stream:    true,
 		User:      data["chatroomId"].(string),

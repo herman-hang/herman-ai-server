@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/herman-hang/herman/application/constants"
+	OpenaiConstant "github.com/herman-hang/herman/application/constants/pc/openai"
 	"github.com/herman-hang/herman/application/models"
 	"github.com/herman-hang/herman/kernel/core"
 	"github.com/herman-hang/herman/kernel/utils"
@@ -104,7 +105,7 @@ func (base ChatroomMessagesRepository) FindNewSexDataByChatroomId(chatroomId uin
 	var messages []models.ChatroomMessages
 	err := base.Db.Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
 		Where("chatroom_id = ?", chatroomId).
-		Order("created_at desc").Limit(5).Find(&messages).Error
+		Order("created_at desc").Limit(OpenaiConstant.NewFiveData).Find(&messages).Error
 	if err != nil {
 		return nil, err
 	}
