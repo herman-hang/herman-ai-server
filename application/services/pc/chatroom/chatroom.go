@@ -52,7 +52,8 @@ func Add(data map[string]interface{}, ctx *gin.Context) map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"id": chatroomId,
+		"id":   chatroomId,
+		"name": data["name"],
 	}
 }
 
