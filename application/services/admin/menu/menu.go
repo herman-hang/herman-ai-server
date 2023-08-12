@@ -77,7 +77,7 @@ func Remove(data map[string]interface{}) {
 // @return map[string]interface{} 返回列表数据
 func List(data map[string]interface{}) map[string]interface{} {
 	// 模糊查询条件拼接
-	query := fmt.Sprintf(" id like '%%%s' or name like '%%%s'", data["keywords"], data["keywords"])
+	query := fmt.Sprintf("id like '%%%s' or name like '%%%s'", data["keywords"], data["keywords"])
 	// 查询指定字段
 	fields := []string{
 		"id",

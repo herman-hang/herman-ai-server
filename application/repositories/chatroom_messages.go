@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"github.com/herman-hang/herman/application/constants"
 	OpenaiConstant "github.com/herman-hang/herman/application/constants/pc/openai"
 	"github.com/herman-hang/herman/application/models"
@@ -8,6 +9,7 @@ import (
 	"github.com/herman-hang/herman/kernel/utils"
 	"github.com/mitchellh/mapstructure"
 	"gorm.io/gorm"
+	"sort"
 )
 
 // ChatroomMessagesRepository 聊天室消息表仓储层
@@ -70,13 +72,39 @@ func (base ChatroomMessagesRepository) FindByChatroomId(data map[string]interfac
 		pageNum = total / page.PageSize
 		pageNum++
 	}
-	err = base.Db.Model(&models.ChatroomMessages{}).
-		Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
-		Where("chatroom_id = ?", data["chatroomId"]).
-		Order("created_at desc").
-		Limit(int(page.PageSize)).
-		Offset(int((page.Page - 1) * page.PageSize)).
-		Find(&list).Error
+
+	if data["messageId"].(uint) != 0 {
+		var beforeMessages []map[string]interface{}
+		var afterMessages []map[string]interface{}
+		err = base.Db.Model(&models.ChatroomMessages{}).
+			Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+			Where("chatroom_id = ?", data["chatroomId"]).
+			Where("id >= ?", data["messageId"]).
+			Limit(25).
+			Order("id asc").
+			Find(&afterMessages).Error
+
+		err = base.Db.Model(&models.ChatroomMessages{}).
+			Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+			Where("chatroom_id = ?", data["chatroomId"]).
+			Where("id < ?", data["messageId"]).
+			Limit(24).
+			Order("id desc").
+			Find(&beforeMessages).Error
+		list = append(afterMessages, beforeMessages...)
+		sort.SliceStable(list, func(i, j int) bool {
+			return list[i]["id"].(uint) > list[j]["id"].(uint)
+		})
+	} else {
+		err = base.Db.Model(&models.ChatroomMessages{}).
+			Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+			Where("chatroom_id = ?", data["chatroomId"]).
+			Where("content like ?", fmt.Sprintf("%%%s%%", data["keywords"])).
+			Order("created_at desc").
+			Limit(int(page.PageSize)).
+			Offset(int((page.Page - 1) * page.PageSize)).
+			Find(&list).Error
+	}
 	if len(list) > 0 {
 		for key, value := range list {
 			attributes := make(map[string]interface{})

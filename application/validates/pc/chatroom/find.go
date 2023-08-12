@@ -7,7 +7,9 @@ var Find = validates.Validates{Validate: FindValidate{}}
 
 // FindValidate 添加验证规则
 type FindValidate struct {
-	ChatroomId uint `json:"chatroomId" validate:"required,number" label:"聊天ID"`
-	Page       uint `json:"page" validate:"numeric" label:"页码"`
-	PageSize   uint `json:"pageSize" validate:"numeric" label:"每页大小"`
+	ChatroomId uint   `json:"chatroomId" validate:"required,number" label:"聊天ID"`
+	Page       uint   `json:"page" validate:"numeric" label:"页码"`
+	PageSize   uint   `json:"pageSize" validate:"numeric" label:"每页大小"`
+	Keywords   string `json:"keywords" validate:"omitempty" label:"每页大小"`
+	MessageId  uint   `json:"messageId" validate:"omitempty,numeric" label:"消息ID"`
 }
