@@ -66,7 +66,7 @@ func (base ChatroomMessagesRepository) FindByChatroomId(data map[string]interfac
 		}
 	}
 	// 总条数
-	base.Db.Model(&models.ChatroomMessages{}).Count(&total)
+	base.Db.Model(&models.ChatroomMessages{}).Where("chatroom_id = ?", data["chatroomId"]).Count(&total)
 	// 计算总页数
 	if page.PageSize != 0 && total%page.PageSize != 0 {
 		pageNum = total / page.PageSize
@@ -74,27 +74,38 @@ func (base ChatroomMessagesRepository) FindByChatroomId(data map[string]interfac
 	}
 
 	if data["messageId"].(uint) != 0 {
-		var beforeMessages []map[string]interface{}
-		var afterMessages []map[string]interface{}
-		err = base.Db.Model(&models.ChatroomMessages{}).
-			Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
-			Where("chatroom_id = ?", data["chatroomId"]).
-			Where("id >= ?", data["messageId"]).
-			Limit(25).
-			Order("id asc").
-			Find(&afterMessages).Error
+		if page.Page > 1 {
+			err = base.Db.Model(&models.ChatroomMessages{}).
+				Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+				Where("chatroom_id = ?", data["chatroomId"]).
+				Where("id = ?", data["messageId"]).
+				Offset(int((page.Page-1)*page.PageSize) - 25).
+				Limit(int(page.PageSize)).
+				Order("created_at desc").
+				Find(&list).Error
+		} else {
+			var beforeMessages []map[string]interface{}
+			var afterMessages []map[string]interface{}
+			err = base.Db.Model(&models.ChatroomMessages{}).
+				Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+				Where("chatroom_id = ?", data["chatroomId"]).
+				Where("id >= ?", data["messageId"]).
+				Limit(25).
+				Order("created_at asc").
+				Find(&afterMessages).Error
 
-		err = base.Db.Model(&models.ChatroomMessages{}).
-			Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
-			Where("chatroom_id = ?", data["chatroomId"]).
-			Where("id < ?", data["messageId"]).
-			Limit(24).
-			Order("id desc").
-			Find(&beforeMessages).Error
-		list = append(afterMessages, beforeMessages...)
-		sort.SliceStable(list, func(i, j int) bool {
-			return list[i]["id"].(uint) > list[j]["id"].(uint)
-		})
+			err = base.Db.Model(&models.ChatroomMessages{}).
+				Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
+				Where("chatroom_id = ?", data["chatroomId"]).
+				Where("id < ?", data["messageId"]).
+				Limit(24).
+				Order("created_at desc").
+				Find(&beforeMessages).Error
+			list = append(afterMessages, beforeMessages...)
+			sort.SliceStable(list, func(i, j int) bool {
+				return list[i]["id"].(uint) > list[j]["id"].(uint)
+			})
+		}
 	} else {
 		err = base.Db.Model(&models.ChatroomMessages{}).
 			Select([]string{"id", "sender_id", "receiver_id", "content", "created_at"}).
