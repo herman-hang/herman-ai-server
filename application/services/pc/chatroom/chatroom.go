@@ -193,19 +193,20 @@ func Find(data map[string]interface{}, ctx *gin.Context) map[string]interface{} 
 		if value["senderId"] == model.Id {
 			list[key]["isMe"] = true
 			userId = value["senderId"].(uint)
+			user, err := repositories.User().Find(map[string]interface{}{
+				"id": userId,
+			}, []string{"id", "photo_id"})
+			if err != nil {
+				panic(ChatroomConstant.GetDataFail)
+			}
+			if len(user) > 0 {
+				list[key]["photoId"] = user["photoId"]
+			} else {
+				list[key]["photoId"] = 0
+			}
 		} else {
 			list[key]["isMe"] = false
 			userId = value["receiverId"].(uint)
-		}
-		user, err := repositories.User().Find(map[string]interface{}{
-			"id": userId,
-		}, []string{"id", "photo_id"})
-		if err != nil {
-			panic(ChatroomConstant.GetDataFail)
-		}
-		if len(user) > 0 {
-			list[key]["photoId"] = user["photoId"]
-		} else {
 			list[key]["photoId"] = 0
 		}
 	}
